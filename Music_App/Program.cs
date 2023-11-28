@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -35,7 +36,14 @@ app.UseAuthentication();
 // app.UseAuthorization();
 app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
     applicationBuilder => applicationBuilder.UseOcelot());
-app.UseDefaultFiles();
+app.UseDefaultFiles(new DefaultFilesOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "html"))
+});
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "html"))
+});
 app.UseStaticFiles();
 
 app.Run();
