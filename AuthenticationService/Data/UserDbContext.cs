@@ -5,9 +5,14 @@ namespace AuthenticationService.Data;
 
 public class UserDbContext: DbContext
 {
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
+
     public UserDbContext(DbContextOptions<UserDbContext> opt) : base(opt)
     {
     }
-    
-    public DbSet<User> Users { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        
+    }
 }
