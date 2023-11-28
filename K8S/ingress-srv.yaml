@@ -1,0 +1,32 @@
+﻿apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /api/authentication
+        pathType: Prefix
+        backend:
+          service:
+            name: authentication-clusterip-srv
+            port:
+              number: 80
+      - path: /api/catalog
+        pathType: Prefix
+        backend:
+          service:
+            name: musiccatalog-clusterip-srv
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: musicapp-clusterip-srv
+            port:
+              number: 80

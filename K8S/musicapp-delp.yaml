@@ -1,0 +1,34 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musicapp-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: musicapp
+  template:
+    metadata:
+      labels:
+        app: musicapp
+    spec:
+      containers:
+        - name: musicapp
+          image: music_app:dev
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: musicapp-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: musicapp
+  ports:
+    - name: musicapp
+      protocol: TCP
+      port: 80
+      targetPort: 80 

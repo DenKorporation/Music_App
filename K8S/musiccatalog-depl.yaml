@@ -1,0 +1,31 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musiccatalog-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: musiccatalogservice
+  template:
+    metadata:
+      labels:
+        app: musiccatalogservice
+    spec:
+      containers:
+        - name: musiccatalogservice
+          image: musiccatalogservice:dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: musiccatalog-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: musiccatalogservice
+  ports:
+    - name: musiccatalogservice
+      protocol: TCP
+      port: 80
+      targetPort: 80 

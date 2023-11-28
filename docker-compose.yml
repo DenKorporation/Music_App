@@ -1,0 +1,6 @@
+﻿services:
+  authenticationservice:
+    image: authenticationservice
+    build:
+      context: .
+      dockerfile: AuthenticationService/Dockerfile
