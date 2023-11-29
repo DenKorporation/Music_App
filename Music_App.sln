@@ -2,14 +2,18 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music_App", "Music_App\Music_App.csproj", "{2774AFE9-3F6A-47E0-BB90-255F83479687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService", "AuthenticationService\AuthenticationService.csproj", "{A8801091-3C0A-4149-B02A-2CE763048F6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService", "Services\AuthenticationService\AuthenticationService.csproj", "{A8801091-3C0A-4149-B02A-2CE763048F6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicCatalogService", "MusicCatalogService\MusicCatalogService.csproj", "{28F66F9F-E401-490C-AA82-081ED9FF87EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicCatalogService", "Services\MusicCatalogService\MusicCatalogService.csproj", "{28F66F9F-E401-490C-AA82-081ED9FF87EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{759ED56F-73C6-443D-8996-A2FD1FB9FDE9}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B904534F-557B-46D6-85DA-6C7BD66D8A68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +33,9 @@ Global
 		{28F66F9F-E401-490C-AA82-081ED9FF87EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28F66F9F-E401-490C-AA82-081ED9FF87EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28F66F9F-E401-490C-AA82-081ED9FF87EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8801091-3C0A-4149-B02A-2CE763048F6B} = {B904534F-557B-46D6-85DA-6C7BD66D8A68}
+		{28F66F9F-E401-490C-AA82-081ED9FF87EE} = {B904534F-557B-46D6-85DA-6C7BD66D8A68}
 	EndGlobalSection
 EndGlobal

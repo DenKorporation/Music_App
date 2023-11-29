@@ -1,7 +1,7 @@
-﻿/AuthenticationService/bin/
-/AuthenticationService/obj/
-/MusicCatalogService/bin/
-/MusicCatalogService/obj/
+﻿Services/AuthenticationService/bin/
+Services/AuthenticationService/obj/
+Services/MusicCatalogService/bin/
+Services/MusicCatalogService/obj/
 /Music_App/bin/
 /Music_App/obj/
 /.idea
