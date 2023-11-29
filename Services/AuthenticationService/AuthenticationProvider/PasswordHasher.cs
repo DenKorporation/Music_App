@@ -1,18 +1,16 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace AuthenticationService.Security;
+namespace AuthenticationService.AuthenticationProvider;
 
-public class PasswordHasher
+public static class PasswordHasher
 {
     public static string HashPassword(string password, string salt)
     {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            string saltedPassword = password + salt;
-            byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-            return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-        }
+        using SHA256 sha256 = SHA256.Create();
+        string saltedPassword = password + salt;
+        byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+        return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
     }
 
     public static string GenerateSalt()

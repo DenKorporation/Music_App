@@ -1,15 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AuthenticationService.Data;
+﻿using System.Net;
+using AuthenticationService.AuthenticationProvider;
+using AuthenticationService.AuthenticationProvider.Models;
 using AuthenticationService.Dtos;
-using AuthenticationService.Models;
-using AuthenticationService.Security;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenticationService.Controllers;
 
@@ -17,83 +11,71 @@ namespace AuthenticationService.Controllers;
 [Route("api/[controller]/[action]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly UserDbContext _dbContext;
-    private readonly IMapper _mapper;
-    private readonly ILogger<AuthenticationController> _logger;
-    private readonly IConfiguration _configuration;
+    private record Jwt(string AccessToken);
+    private readonly IAuthenticationProvider _authenticationProvider;
 
-    public AuthenticationController(IMapper mapper, UserDbContext dbContext, ILogger<AuthenticationController> logger,
-        IConfiguration configuration)
+    public AuthenticationController(IAuthenticationProvider authenticationProvider)
     {
-        _mapper = mapper;
-        _dbContext = dbContext;
-        _logger = logger;
-        _configuration = configuration;
+        _authenticationProvider = authenticationProvider;
     }
 
     [HttpPost(Name = "LogIn")]
+    [ProducesResponseType(typeof(ErrorMessage),(int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType(typeof(Jwt),(int)HttpStatusCode.OK)]
     public ActionResult LogIn(UserLoginDto userLoginDto)
     {
-        var user = _dbContext.Users.Include(user => user.Role).FirstOrDefault(p => p.Login == userLoginDto.Login);
-        if (user == null || user.Password != PasswordHasher.HashPassword(userLoginDto.Password, user.Salt))
+        if (_authenticationProvider.LogIn(userLoginDto, out var jwt, out var errorMessage))
         {
-            _logger.LogInformation($"User '{user?.Id.ToString() ?? "Undefined"}' '{userLoginDto.Login}' login failed");
-            return Unauthorized(new
-            {
-                error = "Unauthorized",
-                message = "Invalid username or password"
-            });
+            return Ok(new Jwt(jwt!));
         }
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Login),
-            new Claim(ClaimTypes.Role, user.Role?.Name ?? "Undefined")
-        };
-        // создаем JWT-токен
-        var jwt = new JwtSecurityToken(
-            issuer: _configuration["Issuer"],
-            audience: _configuration["Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["IssuerSigningKey"]!)),
-                SecurityAlgorithms.HmacSha256));
-
-        _logger.LogInformation($"User '{user.Id}' '{user.Login}' login successfully");
-        return Ok(new { access_token = new JwtSecurityTokenHandler().WriteToken(jwt) });
+        return Unauthorized(errorMessage);
     }
 
     [Authorize]
     [HttpPost(Name = "LogOut")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
     public ActionResult LogOut()
     {
         return Ok();
     }
 
     [HttpPost(Name = "SignUp")]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ErrorMessage),(int)HttpStatusCode.Conflict)]
     public ActionResult SignUp(UserSignupDto userSignupDto)
     {
-        var user = _dbContext.Users.FirstOrDefault(p => p.Login == userSignupDto.Login);
-        if (user != null)
+        if (_authenticationProvider.SignUp(userSignupDto, out var errorMessage))
         {
-            _logger.LogInformation($"User '{user.Login}' sign up failed");
-            return Conflict(new
-            {
-                error = "Conflict",
-                message = "Login is already taken. Please choose another one."
-            });
+            //http 201 created
+            return StatusCode(201);
         }
 
-        user = _mapper.Map<User>(userSignupDto);
-        user.Salt = PasswordHasher.GenerateSalt();
-        user.Password = PasswordHasher.HashPassword(user.Password, user.Salt);
+        return Conflict(errorMessage);
+    }
 
-        _dbContext.Users.Add(user);
-        _dbContext.SaveChanges();
+    [Authorize]
+    [HttpDelete("{userLogin}",Name = "DeleteUser")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorMessage),(int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType(typeof(ErrorMessage),(int)HttpStatusCode.NotFound)]
+    public ActionResult UserAccount(string userLogin)
+    {
+        var userClaims = ControllerContext.HttpContext.User;
+        if (_authenticationProvider.DeleteUser(userClaims, userLogin,out var errorMessage))
+        {
+            return Ok();   
+        }
 
-        _logger.LogInformation($"User '{user.Id}' '{user.Login}' sign up successfully");
-        //http 201 created
-        return StatusCode(201);
+        switch (errorMessage!.Error)
+        {
+            case "Forbid":
+                // default method Forbid doesn't send any value(i didn't find)
+                return StatusCode(403, errorMessage);
+            case "NotFound":
+                return NotFound(errorMessage);
+            default:
+                throw new InvalidOperationException();
+        }
     }
 }

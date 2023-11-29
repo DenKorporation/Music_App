@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using AuthenticationService.AuthenticationProvider;
 using AuthenticationService.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IAuthenticationProvider, AuthenticationProvider>();
 
 var app = builder.Build();
 
