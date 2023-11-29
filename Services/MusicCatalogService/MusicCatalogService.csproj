@@ -5,10 +5,20 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>e60c8c95-dda7-4fae-a756-6633bcdba256</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.13"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+        <PackageReference Include="RabbitMQ.Client" Version="7.0.0-alpha.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
@@ -19,11 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-      <Folder Include="Data\" />
       <Folder Include="Dtos\" />
-      <Folder Include="Models\" />
-      <Folder Include="Profiles\" />
     </ItemGroup>
 
 </Project>
