@@ -11,5 +11,8 @@ public class UsersProfile:Profile
         CreateMap<UserSignupDto, User>();
         CreateMap<User, UserReadDto>();
         CreateMap<UserLoginDto, User>();
+        CreateMap<User, UserReadDto>()
+            .ForMember(dest => dest.Role, opt=> opt.Ignore());
+        CreateMap<Role, RoleReadDto>();
     }
 }

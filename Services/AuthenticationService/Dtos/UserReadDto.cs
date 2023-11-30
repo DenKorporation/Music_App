@@ -1,13 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AuthenticationService.Dtos;
+﻿namespace AuthenticationService.Dtos;
 
 public class UserReadDto
 {
-    [Required]
-    public int Id { get; set; }
-
-    [Required] 
     public string Login { get; set; } = "";
-    
+
+    public string Role { get; set; } = "";
 }

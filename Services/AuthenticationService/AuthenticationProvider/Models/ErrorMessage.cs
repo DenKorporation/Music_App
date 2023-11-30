@@ -1,7 +1,9 @@
-﻿namespace AuthenticationService.AuthenticationProvider.Models;
+﻿using System.Net;
+
+namespace AuthenticationService.AuthenticationProvider.Models;
 
 public class ErrorMessage
 {
-    public string Error { get; set; } = "";
+    public HttpStatusCode Error { get; set; }
     public string Message { get; set; } = "";
 }
